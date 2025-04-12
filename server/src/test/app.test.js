@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('./app'); // Reuse the app from one source
+const app = require('../app'); // Reuse the app from one source
 
 describe('GET /ping', () => {
   it('should return pong', async () => {
