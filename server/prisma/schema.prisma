@@ -19,4 +19,14 @@ model User {
   relationType     String
   personalAnthem   String?
   createdAt        DateTime @default(now())
+  Like             Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  type      String // "artist" or "genre"
+  value     String
+  createdAt DateTime @default(now())
 }
