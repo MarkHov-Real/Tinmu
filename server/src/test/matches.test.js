@@ -33,19 +33,20 @@ beforeEach(async () => {
   });
 
   // Create a matching user
+  const hashed2 = await bcrypt.hash("test12345", 10);
   const matchUser = await prisma.user.create({
     data: {
       name: "Matching Girl",
-      email: "matchher@test.com",
-      password: "irrelevant",
+      email: "matcher@test.com",
+      password: hashed2,
       favoriteGenre: "Indie",
       gender: "female",
       lookingForGender: "male",
-      relationType: "lover",
+      relationType: "friend",
     },
   });
 
-  await prisma.like.create({
+  await prisma.like.createMany({
     data: [
       {
         userId: matchUser.id,
@@ -59,6 +60,8 @@ beforeEach(async () => {
       },
     ],
   });
+
+  // console.log("Match user are : ", matchUser);
 
   const res = await request(app)
     .post("/auth/login")
