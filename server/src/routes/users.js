@@ -37,6 +37,7 @@ router.post("/", async (req, res) => {
       data: {
         ...validatedData,
         password: hashedPassword,
+        personalThemeTempo: validatedData.personalThemeTempo || "slow",
       },
       select: safeUserSelect,
     });
