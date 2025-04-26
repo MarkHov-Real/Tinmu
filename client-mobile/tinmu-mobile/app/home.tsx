@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { colors } = useDynamicTheme(user?.favoriteTempo || "slow");
 
   useEffect(() => {
     const loadUser = async () => {
@@ -41,14 +44,23 @@ export default function Home() {
 
   if (!user) return <Text>Failed to load user 😢</Text>;
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>👋 Welcome, {user.name}!</Text>
-      <Text>Email: {user.email}</Text>
-      <Text>Genre: {user.favoriteGenre}</Text>
-      <Text>Artist: {user.favoriteArtist || "N/A"}</Text>
-      <Text>Anthem: {user.personalAnthem || "🎵 Not set"}</Text>
+  const fields = [
+{label: "Email", value: user.email },
+{label: "Genre", value: user.favoriteGenre },
+{label: "Artist", value: user.favoriteArtist || "Not set"},
+{label: "Anthem", value: user.personalAnthem || "Not set" },
+{label: "What gender I'm attracted to", value: user.lookingForGenre || "Not set" },
+{label: "Relation Type", value: user.relationType || "Not set" },
+  ]
 
+  return (
+    <View style={[styles.container, {backgroundColor: colors.background }]}>
+      <Text style={[styles.title, {color:colors.text}]}>👋 Welcome, {user.name}!</Text>
+      {fields.map((field, index) => (
+        <Text key={index} style={[styles.text, { color: colors.text }]}>
+          {field.label}: {field.value}
+        </Text>
+      ))}
       <Button title="Logout" onPress={handleLogout} color="#FF5C5C" />
     </View>
   );
@@ -60,11 +72,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 16,
   },
+  text:{
+    fontSize:18,
+    marginBottom:10
+  }
 });

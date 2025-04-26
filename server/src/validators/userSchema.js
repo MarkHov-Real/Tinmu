@@ -10,6 +10,7 @@ const userSchema = yup.object({
   lookingForGender: yup.string().required(),
   relationType: yup.string().oneOf(["friend", "lover", "dating"]).required(),
   personalAnthem: yup.string(),
+  personalThemeTempo: yup.string(),
 });
 
 module.exports = userSchema;

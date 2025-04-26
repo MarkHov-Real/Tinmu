@@ -1,12 +1,22 @@
 // app/index.tsx
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, } from "react-native";
+import { useEffect, useState } from "react";
 import { Link } from "expo-router";
+import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+
 
 export default function Welcome() {
+   const [user, setUser] = useState(null);
+  const { colors } = useDynamicTheme(user?.favoriteTempo || "fast");
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🎵 Welcome to TINMU</Text>
-      <Text style={styles.subtitle}>Your music soulmate awaits.</Text>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Text style={[styles.title, { color: colors.text }]}>
+        🎵 Welcome to TINMU
+      </Text>
+      <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
+        Your music soulmate awaits.
+      </Text>
 
       <Link href="/login" asChild>
         <Button title="Log In" />
@@ -25,7 +35,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: "#fff",
   },
   title: {
     fontSize: 28,
@@ -35,6 +44,5 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     marginBottom: 20,
-    color: "#666",
   },
 });
