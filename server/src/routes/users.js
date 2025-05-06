@@ -18,6 +18,7 @@ const safeUserSelect = {
   lookingForGender: true,
   relationType: true,
   personalAnthem: true,
+  personalThemeTempo: true,
   createdAt: true,
 };
 

@@ -2,12 +2,11 @@
 import { View, Text, Button, StyleSheet, } from "react-native";
 import { useEffect, useState } from "react";
 import { Link } from "expo-router";
-import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+import { useUserAuthTheme } from "../contexts/AuthThemeContext";
 
 
 export default function Welcome() {
-   const [user, setUser] = useState(null);
-  const { colors } = useDynamicTheme(user?.favoriteTempo || "fast");
+  const {colors } = useUserAuthTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

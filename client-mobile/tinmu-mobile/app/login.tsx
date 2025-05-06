@@ -3,44 +3,63 @@ import { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+import { useUserAuthTheme } from "../contexts/AuthThemeContext";
+
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 const [user, setUser] = useState(null);
-const { colors } = useDynamicTheme(user?.favoriteTempo || "slow");
+const { colors, setThemeTempo } = useUserAuthTheme();
 
-  const handleLogin = async () => {
-    try {
-      const res = await fetch("http://172.26.64.1:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || "Login failed");
+const handleLogin = async () => {
+  try {
+    const res = await fetch("http://10.0.0.220:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      // 💡 Store token later with AsyncStorage
-      console.log("✅ Logged in:", data.token);
-      await AsyncStorage.setItem('token', data.token);
-      router.push("/home"); // redirect after login
-    } catch (err: any) {
-      Alert.alert("❌ Login Failed", err.message);
-    }
-  };
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Login failed");
+
+    console.log("✅ Logged in:", data.token);
+    await AsyncStorage.setItem("token", data.token);
+
+    // 🟢 FETCH USER AFTER LOGIN
+    const userRes = await fetch("http://10.0.0.220:3000/users/me", {
+      headers: { Authorization: `Bearer ${data.token}` },
+    });
+
+    const userData = await userRes.json();
+
+    if (!userRes.ok) throw new Error("Failed to fetch user");
+
+    console.log("👤 Got user data:", userData);
+
+    // 🔥 NOW you have userData → set theme
+    setThemeTempo(userData.personalThemeTempo || "slow");
+    await AsyncStorage.setItem("themeTempo", userData.personalThemeTempo || "slow");
+
+    // ✅ Now safe to navigate
+    router.push("/home");
+  } catch (err: any) {
+    Alert.alert("❌ Login Failed", err.message);
+  }
+};
+
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.text }]}>Log In</Text>
 
-      <Text style={[styles.userInfo, { color: colors.text }]}>User : like@test.com</Text>
+      <Text style={[styles.userInfo, { color: colors.text }]}>User : frontend1@test.com</Text>
       <Text style={[styles.userInfo, { color: colors.text }]}>Password : test1234</Text>
-
+      <Text style={[styles.userInfo, { color: colors.text }]}>User : frontend2@test.com</Text>
+      <Text style={[styles.userInfo, { color: colors.text }]}>Password : test5678</Text>
       <TextInput
         placeholder="Email"
         value={email}

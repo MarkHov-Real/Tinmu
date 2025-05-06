@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+import { useUserAuthTheme } from "../contexts/AuthThemeContext";
 
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { colors } = useDynamicTheme(user?.favoriteTempo || "slow");
+  const { colors } = useUserAuthTheme();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -16,7 +16,7 @@ export default function Home() {
       console.log(token);
 
       try {
-        const res = await fetch("http://172.26.64.1:3000/users/me", {
+        const res = await fetch("http://10.0.0.220:3000/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -54,7 +54,7 @@ export default function Home() {
   ]
 
   return (
-    <View style={[styles.container, {backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, {color:colors.text}]}>👋 Welcome, {user.name}!</Text>
       {fields.map((field, index) => (
         <Text key={index} style={[styles.text, { color: colors.text }]}>
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 8,
+    backgroundColor: "#cbe7aa", // default background color
   },
   title: {
     fontSize: 22,
@@ -81,5 +82,8 @@ const styles = StyleSheet.create({
   text:{
     fontSize:18,
     marginBottom:10
-  }
+  },
+  background: {
+    backgroundColor: "#f5s50", // default background color
+  },
 });
