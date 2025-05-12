@@ -1,48 +1,28 @@
 // app/index.tsx
-import { View, Text, Button, StyleSheet, } from "react-native";
-import { useEffect, useState } from "react";
-import { Link } from "expo-router";
-import { useDynamicTheme } from "../hooks/useDynamicTheme"; 
+import { useEffect } from "react";
+import { router } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
+import { storage } from "../utils/storage"; //
 
+export default function IndexRedirector() {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await storage.getItem("token");
+      console.log("🔄 From index.tsx: Token loaded", token);
 
-export default function Welcome() {
-   const [user, setUser] = useState(null);
-  const { colors } = useDynamicTheme(user?.favoriteTempo || "fast");
+      if (token) {
+        router.replace("/(tabs)/profile"); // ✅ Go to home tab
+      } else {
+        router.replace("/auth/login"); // ❌ Not authenticated
+      }
+    };
+
+    checkToken();
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>
-        🎵 Welcome to TINMU
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
-        Your music soulmate awaits.
-      </Text>
-
-      <Link href="/login" asChild>
-        <Button title="Log In" />
-      </Link>
-
-      <Link href="/signup" asChild>
-        <Button title="Sign Up" />
-      </Link>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 20,
-  },
-});

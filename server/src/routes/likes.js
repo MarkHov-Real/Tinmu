@@ -36,22 +36,31 @@ router.post("/", authenticateToken, async (req, res) => {
     if (err.name === "ValidationError") {
       return res
         .status(400)
-        .json({ error: "Validation failed", details: err.errors });
+        .json({
+          error: "Validation failed",
+          details: err.errors
+        });
     }
     console.error("❌ Error creating like:", err);
-    res.status(500).json({ error: "Failed to create like" });
+    res.status(500).json({
+      error: "Failed to create like"
+    });
   }
 });
 
 router.get("/me", authenticateToken, async (req, res) => {
   try {
     const like = await prisma.like.findMany({
-      where: { userId: Number(req.user.userId) },
+      where: {
+        userId: Number(req.user.userId)
+      },
       select: safeLikeSelect,
     });
 
     if (like.length === 0) {
-      return res.status(404).json({ error: "No likes found for this user" });
+      return res.status(404).json({
+        error: "No likes found for this user"
+      });
     }
 
     res.json(like);
@@ -59,7 +68,9 @@ router.get("/me", authenticateToken, async (req, res) => {
     console.error("Error in /like/me:", err); // 👈 helpful log
     res
       .status(500)
-      .json({ error: "Failed to fetch current likes (from /me route)" });
+      .json({
+        error: "Failed to fetch current likes (from /me route)"
+      });
   }
 });
 

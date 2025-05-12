@@ -21,6 +21,7 @@ beforeEach(async () => {
       gender: "male",
       lookingForGender: "any",
       relationType: "friend",
+      personalThemeTempo: "fast",
       personalAnthem: "God's Plan",
     },
   });
