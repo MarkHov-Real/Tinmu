@@ -1,11 +1,10 @@
-// app/_layout.tsx
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { AuthThemeProvider } from "../contexts/AuthThemeContext";
 
-export default function Layout() {
+export default function RootLayout() {
   return (
     <AuthThemeProvider>
-      <Stack />
+      <Slot />
     </AuthThemeProvider>
   );
 }

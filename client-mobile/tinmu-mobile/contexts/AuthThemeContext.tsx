@@ -1,28 +1,22 @@
-// contexts/AuthThemeContext.tsx
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useDynamicTheme } from "../hooks/useDynamicTheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storage } from "@/utils/storage";
 
-// Define the shape of the context
-const AuthThemeContext = createContext<{
-  colors: { background: string; text: string };
-  loading: boolean;
-  setThemeTempo: (tempo: string) => void;
-}>({
-  colors: { background: "#000", text: "#fff" }, // fallback
+export const AuthThemeContext = createContext({
+  colors: { background: "#000", text: "#fff" },
   loading: true,
-  setThemeTempo: () => {},
+  setThemeTempo: (tempo: string) => {},
 });
 
-// The Provider component
 export function AuthThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themeTempo, setThemeTempo] = useState<string>("slow");
-  const { colors } = useDynamicTheme(themeTempo);
+  const [themeTempo, setThemeTempo] = useState("fast");
   const [loading, setLoading] = useState(true);
+
+  const { colors } = useDynamicTheme(themeTempo);
 
   useEffect(() => {
     const loadTheme = async () => {
-      const storedTempo = await AsyncStorage.getItem("themeTempo");
+      const storedTempo = await storage.getItem("themeTempo");
       if (storedTempo) {
         setThemeTempo(storedTempo);
       }
@@ -31,8 +25,6 @@ export function AuthThemeProvider({ children }: { children: React.ReactNode }) {
     loadTheme();
   }, []);
 
-  console.log("Theme Tempo:", themeTempo);
-  console.log("Theme Colors:", colors);
   return (
     <AuthThemeContext.Provider value={{ colors, loading, setThemeTempo }}>
       {children}
@@ -40,7 +32,6 @@ export function AuthThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Hook to access the context
 export function useUserAuthTheme() {
   return useContext(AuthThemeContext);
 }

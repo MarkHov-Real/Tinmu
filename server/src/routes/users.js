@@ -23,7 +23,7 @@ const safeUserSelect = {
 };
 
 // Create user
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const validatedData = await userSchema.validate(req.body, {
       abortEarly: false,
@@ -51,6 +51,7 @@ router.post("/", async (req, res) => {
         details: err.errors,
       });
     }
+    console.error(err); // 👈 ADD THIS LINE
     res.status(500).json({ error: "Failed to create user" });
   }
 });
